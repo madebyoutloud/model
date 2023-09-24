@@ -1,5 +1,12 @@
 
 
+# 0.1.0 (2023-09-24)
+
+
+### Features
+
+* init ([684735a](https://git.outloud.dev/outloud/libraries/model/commits/684735aac60b4240faafddb2c2385f6b37f80747))
+
 ## [1.0.2](https://git.outloud.dev/outloud/libraries/vue-notifications/compare/v1.0.1...v1.0.2) (2023-09-16)
 
 
