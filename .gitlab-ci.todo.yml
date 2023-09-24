@@ -1,0 +1,21 @@
+stages:
+  - triggers
+
+library:
+  stage: triggers
+  trigger:
+    include: .gitlab/library.yml
+    strategy: depend
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v.*$/
+
+docs:
+  stage: triggers
+  trigger:
+    include: .gitlab/docs.yml
+    strategy: depend
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      changes:
+        - docs/**/*
+        - .gitlab/docs.yml

@@ -1,0 +1,44 @@
+{
+  "name": "@outloud/model",
+  "description": "",
+  "private": false,
+  "version": "0.0.0",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vitest dev",
+    "build": "unbuild",
+    "test": "vitest run",
+    "release": "pnpm build && release-it"
+  },
+  "peerDependencies": {
+    "dayjs": "^1"
+  },
+  "peerDependenciesMeta": {
+    "dayjs": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@release-it/conventional-changelog": "^5.1.1",
+    "dayjs": "^1.11.10",
+    "release-it": "^15.6.0",
+    "unbuild": "^2.0.0",
+    "vitest": "^0.34.5"
+  },
+  "packageManager": "pnpm@8.6.12"
+}
