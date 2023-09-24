@@ -1,5 +1,12 @@
 
 
+## [0.1.2](https://git.outloud.dev/outloud/libraries/model/compare/v0.1.1...v0.1.2) (2023-09-24)
+
+
+### Bug Fixes
+
+* related mapping ([6dd0d5f](https://git.outloud.dev/outloud/libraries/model/commits/6dd0d5fbcb262256756c274cafaaafe355c009f9))
+
 ## [0.1.1](https://git.outloud.dev/outloud/libraries/model/compare/v0.1.0...v0.1.1) (2023-09-24)
 
 
