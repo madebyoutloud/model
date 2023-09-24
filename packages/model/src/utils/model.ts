@@ -1,23 +1,22 @@
-import type { ModelValues } from '..'
+import type { ModelValues } from '../types'
 import type { ModelClass } from '../Model'
 
 export function toModel<
   T extends ModelClass,
-  Result extends InstanceType<T>,
-  Value extends ModelValues<Result>[] | ModelValues<Result> | null,
->(value: Value, model: T & { new(): Result }): Value extends any[] ? Result[] : (Value extends null ? Result | null : Result)
+  Value extends ModelValues<InstanceType<T>>[] | ModelValues<InstanceType<T>>,
+  Result = InstanceType<T>,
+>(value: Value, model: T): Value extends any[] ? Result[] : (Value extends null ? Result | null : Result)
 
 export function toModel<
   T extends ModelClass,
-  Result extends InstanceType<T>,
-  Value extends ModelValues<Result>[] | ModelValues<Result> | null,
+  Value extends ModelValues<InstanceType<T>>[] | ModelValues<InstanceType<T>> | null,
 >(
   value: Value,
   model: T,
 ): InstanceType<T>[] | InstanceType<T> | null {
   if (Array.isArray(value)) {
     if (value.length && !(value[0] instanceof model)) {
-      return value.map(item => model.create(item))
+      return value.map(item => model.create(item as any))
     }
   }
   else if (value && !(value instanceof model)) {

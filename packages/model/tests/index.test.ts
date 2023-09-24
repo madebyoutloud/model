@@ -18,6 +18,8 @@ class Test extends Model {
 class Extended extends Test {
   public isExtended: boolean
 
+  public nested: { value: string }
+
   @column()
   order: number
 
@@ -128,6 +130,7 @@ describe('@outloud/model', () => {
   test('relation', () => {
     const plain = Relation.create({
       id: 123,
+
     })
 
     const relation = Relation.create({

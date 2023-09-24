@@ -1,11 +1,22 @@
 import type { Dayjs } from 'dayjs'
-import type { Model, ModelClass } from './Model'
+import type { Model } from './Model'
 
-export type ModelValues<T> = T extends ModelClass ? {
-  [K in keyof T]?: T[K] extends Function ? never : K
-} : T extends object ? {
-  [K in keyof T]?: ModelValues<T[K]>
-} : T
+type PartialModelValue<T> = T extends (infer U)[]
+  ? PartialModelValue<U>[]
+  : T extends Model
+    ? ModelValues<T>
+    : T
+
+type NonFunctionPropertyNames<T> = {
+  [K in keyof T]: T[K] extends Function ? never : K;
+}[keyof T]
+
+export type ModelValues<
+  T extends Model,
+  Filtered = Pick<T, NonFunctionPropertyNames<T>>,
+> = {
+  [K in keyof Filtered]?: PartialModelValue<Filtered[K]>
+}
 
 export type DecoratorFn = (target: any, property: any) => void
 

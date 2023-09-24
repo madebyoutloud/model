@@ -92,13 +92,6 @@ export class Model {
     // return new Proxy(this, proxyHandler)
   }
 
-  private $createRelation(key: string, value: any) {
-    const model = this.constructor as ModelClass
-    const relation = model.$relations.get(key)
-
-    return toModel(value, relation!())
-  }
-
   public fill(values: ModelValues<this>) {
     // this.$attributes = {}
     Object.assign(this, values)
@@ -116,7 +109,7 @@ export class Model {
       let value = anyValues[key]
 
       if (model.$relations.has(key)) {
-        value = this.$createRelation(key, value)
+        value = toModel(value, model.$relations.get(key)!())
       }
       else if (model.$columns.has(key)) {
         const column = model.$columns.get(key)!
