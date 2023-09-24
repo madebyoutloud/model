@@ -1,5 +1,12 @@
 
 
+## [0.1.1](https://git.outloud.dev/outloud/libraries/model/compare/v0.1.0...v0.1.1) (2023-09-24)
+
+
+### Bug Fixes
+
+* types ([741dc6d](https://git.outloud.dev/outloud/libraries/model/commits/741dc6db3633d196482f072e99fa5e6c22b00644))
+
 # 0.1.0 (2023-09-24)
 
 

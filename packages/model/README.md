@@ -1,1 +1,1 @@
-# @outloud/vue-notifications
+# @outloud/model
