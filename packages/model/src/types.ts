@@ -1,5 +1,5 @@
 import type { Dayjs } from 'dayjs'
-import type { Model } from './Model'
+import type { Model, ModelClass } from './Model'
 
 type PartialModelValue<T> = T extends (infer U)[]
   ? PartialModelValue<U>[]
@@ -54,3 +54,9 @@ export type DateColumnDecorator = (
 ) => OptionalTypedDecorator<Dayjs | null>
 
 export type DateTimeColumnDecorator = DateColumnDecorator
+
+export type ModelRelationOptions<T extends ModelClass = ModelClass> = {
+  type: string
+  relatedModel: () => T
+  map: (value: any, attribute: string, model: Model) => any
+}

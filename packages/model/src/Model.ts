@@ -1,8 +1,7 @@
 // import { proxyHandler } from './proxyHandler'
-import type { ColumnOptions, ModelColumnOptions, ModelValues } from './types'
+import type { ColumnOptions, ModelColumnOptions, ModelRelationOptions, ModelValues } from './types'
 import type { NormalizeConstructor } from './utils/compose'
 import { defineStaticProperty } from './utils/defineStaticProperty'
-import { toModel } from './utils/model'
 
 export type ModelClass = typeof Model
 export type NormalizedModel = NormalizeConstructor<ModelClass>
@@ -14,7 +13,7 @@ export interface ModelObject {
 export class Model {
   static $isBooted: boolean
   static $columns: Map<string, ModelColumnOptions>
-  static $relations: Map<string, () => ModelClass>
+  static $relations: Map<string, ModelRelationOptions>
 
   $attributes: ModelObject
 
@@ -68,9 +67,9 @@ export class Model {
 
   static $addRelation<T extends ModelClass>(
     name: string,
-    relatedModel: () => T,
+    options: ModelRelationOptions<T>,
   ) {
-    this.$relations.set(name, relatedModel)
+    this.$relations.set(name, options)
   }
 
   public static create<T extends ModelClass>(this: T, values: ModelValues<InstanceType<T>>): InstanceType<T> {
@@ -94,22 +93,27 @@ export class Model {
 
   public fill(values: ModelValues<this>) {
     // this.$attributes = {}
-    Object.assign(this, values)
     this.merge(values)
 
     return this
   }
 
   public merge(values: ModelValues<this>) {
-    const anyValues = values as any
     const anyThis = this as any
     const model = this.constructor as ModelClass
 
     Object.keys(values).forEach((key) => {
-      let value = anyValues[key]
+      let value = values[key as keyof typeof values]
 
       if (model.$relations.has(key)) {
-        value = toModel(value, model.$relations.get(key)!())
+        value = model.$relations.get(key)!.map(value, key, this)
+
+        // do not replace array if exists, just clear it and insert new records
+        // this allows using custom collection where you extend Array
+        if (Array.isArray(anyThis[key])) {
+          anyThis[key].splice(0, anyThis[key].length, ...(value as any[]))
+          return
+        }
       }
       else if (model.$columns.has(key)) {
         const column = model.$columns.get(key)!
