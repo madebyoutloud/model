@@ -5,7 +5,7 @@ Transforms plain object to model.
 
 ```ts
 import type { Dayjs } from 'dayjs'
-import { Model, column } from '@outloud/model'
+import { Model, hasOne } from '@outloud/model'
 
 class Organization extends Model {
   name: string

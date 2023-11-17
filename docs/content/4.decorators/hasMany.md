@@ -5,7 +5,7 @@ Transforms array of plain objects to models.
 
 ```ts
 import type { Dayjs } from 'dayjs'
-import { Model, column } from '@outloud/model'
+import { Model, hasMany } from '@outloud/model'
 
 class Post extends Model {
   id: number
