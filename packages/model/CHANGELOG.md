@@ -1,5 +1,17 @@
 
 
+## [0.1.3](https://git.outloud.dev/outloud/libraries/model/compare/v0.1.2...v0.1.3) (2023-11-17)
+
+
+### Bug Fixes
+
+* title ([a0379bc](https://git.outloud.dev/outloud/libraries/model/commits/a0379bcaadf1e0258fe2b00174240a3c4b812200))
+
+
+### Features
+
+* add docs ([f95f182](https://git.outloud.dev/outloud/libraries/model/commits/f95f182118db64f8b713a1910112236e1c92f5f6))
+
 ## [0.1.2](https://git.outloud.dev/outloud/libraries/model/compare/v0.1.1...v0.1.2) (2023-09-24)
 
 
