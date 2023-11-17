@@ -1,6 +1,6 @@
 {
   "title": "Model",
-  "description": "A TS library for mapping data to model objects.",
+  "description": "A JavaScript library for mapping plain data to models.",
   "repository": "https://git.outloud.dev/outloud/libraries/model",
   "private": true,
   "scripts": {

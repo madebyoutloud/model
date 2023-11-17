@@ -1,4 +1,4 @@
-import type { Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import type { DateColumnDecorator } from '../types'
 import type { Model, ModelClass } from '../Model'
