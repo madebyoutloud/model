@@ -5,7 +5,7 @@ export * from './utils/model'
 export * from './Model'
 
 export * from './decorators/column'
-export * from './decorators/related'
-export * from './decorators/collection'
+export * from './decorators/hasOne'
+export * from './decorators/hasMany'
 
 export * from './types'

@@ -8,7 +8,11 @@ export function toModel<
 >(
   value: Value,
   model: T
-): Value extends any[] ? Result[] : (Value extends null ? Result | null : Result)
+): Value extends any[]
+  ? Result[]
+  : Value extends null
+    ? Result | null
+    : Result
 
 export function toModel<
   T extends ModelClass,
