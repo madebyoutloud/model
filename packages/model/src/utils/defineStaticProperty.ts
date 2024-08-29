@@ -1,6 +1,6 @@
 // https://github.com/poppinss/utils/blob/develop/src/defineStaticProperty.ts
 
-import { clone } from './clone'
+import { clone } from './clone.js'
 
 type Constructor = new (...args: any[]) => any
 type AbstractConstructor = abstract new (...args: any[]) => any
@@ -24,7 +24,7 @@ export function defineStaticProperty<
     strategy: 'inherit' | 'define' | ((value: T[Prop]) => T[Prop])
   },
 ) {
-  if (self.hasOwnProperty(propertyName)) {
+  if (Object.hasOwn(self, propertyName)) {
     return
   }
 

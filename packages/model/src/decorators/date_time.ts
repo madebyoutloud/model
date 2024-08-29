@@ -1,7 +1,18 @@
 import type { ColumnDecorator } from '../types.js'
 import type { ModelClass } from '../model.js'
 import { config } from '../config.js'
-import { deserialize } from './date_time.js'
+
+export function deserialize(value: any): unknown {
+  if (typeof value === 'string') {
+    value = new Date(value)
+  }
+
+  if (value instanceof Date) {
+    return config.date.parse(value)
+  }
+
+  return value
+}
 
 function serialize(value: unknown) {
   if (typeof value === 'string' || value === null || value === undefined) {
@@ -13,17 +24,13 @@ function serialize(value: unknown) {
   }
 
   if (value instanceof Date) {
-    return [
-      String(value.getFullYear()).padStart(4, '0'),
-      String(value.getMonth() + 1).padStart(2, '0'),
-      String(value.getDate()).padStart(2, '0'),
-    ].join('-')
+    return value.toISOString()
   }
 
   return value
 }
 
-export const date: ColumnDecorator = (options = {}) => {
+export const dateTime: ColumnDecorator = (options = {}) => {
   return function decorateAsColumn(target, property) {
     const Model = target.constructor as ModelClass
     Model.$boot()
@@ -37,7 +44,7 @@ export const date: ColumnDecorator = (options = {}) => {
       options,
     )
 
-    normalizedOptions.meta.type = 'date'
+    normalizedOptions.meta.type = 'dateTime'
 
     Model.$addColumn(property, normalizedOptions)
   }

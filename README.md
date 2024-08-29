@@ -1,1 +1,1 @@
-# @outloud/model
+packages/model/README.md

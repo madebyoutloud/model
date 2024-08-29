@@ -1,4 +1,4 @@
-type Constructor = new (...args: any[]) => {}
+type Constructor = new (...args: any[]) => object
 
 /**
  * Normalizes constructor to work with mixins. There is an open bug for mixins
@@ -6,13 +6,9 @@ type Constructor = new (...args: any[]) => {}
  *
  * https://github.com/microsoft/TypeScript/issues/37142
  */
-export type NormalizeConstructor<T extends Constructor> = {
-  new (...args: any[]): InstanceType<T>
-} & Omit<T, 'constructor'>
+export type NormalizeConstructor<T extends Constructor> = (new (...args: any[]) => InstanceType<T>) & Omit<T, 'constructor'>
 
-export interface UnaryFunction<T, R> {
-  (source: T): R
-}
+export type UnaryFunction<T, R> = (source: T) => R
 
 /**
  * Compose a class by applying mixins to it.

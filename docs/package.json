@@ -10,7 +10,7 @@
     "preview": "nuxt preview"
   },
   "devDependencies": {
-    "nuxt": "^3.8.1"
+    "nuxt": "^3"
   },
   "dependencies": {
     "@nuxt-themes/docus": "^1.15.0",

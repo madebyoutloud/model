@@ -1,28 +1,28 @@
 import { describe, expect, it } from 'vitest'
-import { Model, collection, related } from '../src'
+import { Model, hasMany, hasOne } from '../src/index.js'
 
 class A extends Model {
-  a: string
+  declare a: string
 }
 
 class B extends Model {
-  b: string
+  declare b: string
 
-  @related(() => A)
-  a: A
+  @hasOne(() => A)
+  declare a: A
 
-  @related(() => A)
-  optionalA?: A
+  @hasOne(() => A)
+  declare optionalA?: A | null
 
-  @collection(() => A)
-  list: A[]
+  @hasMany(() => A)
+  declare list: A[]
 
-  @collection(() => A)
+  @hasMany(() => A)
   collection = new Collection<A>()
 }
 
 class Collection<T> extends Array<T> {
-  public custom() {
+  custom() {
     return true
   }
 }

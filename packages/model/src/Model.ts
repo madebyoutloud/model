@@ -1,24 +1,42 @@
 // import { proxyHandler } from './proxyHandler'
-import type { ColumnOptions, ModelColumnOptions, ModelRelationOptions, ModelValues } from './types'
-import type { NormalizeConstructor } from './utils/compose'
-import { defineStaticProperty } from './utils/defineStaticProperty'
+import type { ColumnOptions, ModelColumnOptions, ModelObject, ModelRelationOptions, ModelValues } from './types.js'
+import type { NormalizeConstructor } from './utils/compose.js'
+import { defineStaticProperty } from './utils/defineStaticProperty.js'
 
 export type ModelClass = typeof Model
 export type NormalizedModel = NormalizeConstructor<ModelClass>
 
-export interface ModelObject {
-  [key: string]: any
-}
+type MapReturnType<
+  T extends ModelClass,
+  Data extends ModelObject | ModelObject[] | null | undefined,
+  ToArray extends boolean | undefined = undefined,
+> = ToArray extends true
+  ? InstanceType<T>[]
+  : ToArray extends false
+    ? (Data extends ModelObject ? InstanceType<T> : InstanceType<T> | null)
+    : Data extends any[]
+      ? InstanceType<T>[]
+      : Data extends ModelObject
+        ? InstanceType<T>
+        : Data extends ModelObject | null | undefined
+          ? InstanceType<T> | null
+          : InstanceType<T> | InstanceType<T>[] | null
+
+type MapperReturnType<T extends ModelClass, ToArray extends boolean | undefined> = ToArray extends true
+  ? (data: any[]) => InstanceType<T>[]
+  : ToArray extends false
+    ? (data: any) => InstanceType<T>
+    : (data: any) => InstanceType<T> | null
 
 export class Model {
   static $isBooted: boolean
   static $columns: Map<string, ModelColumnOptions>
   static $relations: Map<string, ModelRelationOptions>
 
-  $attributes: ModelObject
+  declare $attributes: ModelObject
 
   static $boot() {
-    if (!this.hasOwnProperty('$isBooted')) {
+    if (!Object.hasOwn(this, '$isBooted')) {
       this.$isBooted = false
     }
 
@@ -72,11 +90,55 @@ export class Model {
     this.$relations.set(name, options)
   }
 
-  public static create<T extends ModelClass>(this: T, values: ModelValues<InstanceType<T>>): InstanceType<T> {
+  static create<T extends ModelClass>(this: T, values: ModelValues<InstanceType<T>>): InstanceType<T> {
     const model = new this() as InstanceType<T>
     model.fill(values)
 
     return model
+  }
+
+  static fromJSON<T extends ModelClass>(this: T, values: ModelObject): InstanceType<T> {
+    if (values instanceof this) {
+      return values as InstanceType<T>
+    }
+
+    return this.create(values as ModelValues<InstanceType<T>>)
+  }
+
+  static map<
+    T extends ModelClass,
+    Data extends ModelObject | ModelObject[] | null | undefined = undefined,
+    ToArray extends boolean | undefined = undefined,
+  >(this: T, data?: Data, toArray?: ToArray): MapReturnType<T, Data, ToArray>
+
+  static map<T extends ModelClass>(this: T, data?: any, toArray?: boolean): InstanceType<T>[] | InstanceType<T> | null {
+    if (toArray === false && Array.isArray(data)) {
+      data = data[0]
+    } else if (toArray === true && !Array.isArray(data)) {
+      data = data ? [data] : []
+    }
+
+    if (Array.isArray(data)) {
+      return data.map((item) => this.fromJSON(item))
+    }
+
+    if (data === null || data === undefined) {
+      return null
+    }
+
+    return this.fromJSON(data)
+  }
+
+  static mapper<
+    T extends ModelClass,
+    ToArray extends boolean | undefined = undefined,
+    >(this: T, toArray?: ToArray): MapperReturnType<T, ToArray>
+  static mapper<T extends ModelClass>(this: T, toArray?: boolean): (...args: any[]) => any {
+    if (toArray) {
+      return (data: any[]) => this.map(data, true)
+    }
+
+    return (data: any) => this.map(data, false)
   }
 
   constructor() {
@@ -91,14 +153,14 @@ export class Model {
     // return new Proxy(this, proxyHandler)
   }
 
-  public fill(values: ModelValues<this>) {
+  fill(values: ModelValues<this>) {
     // this.$attributes = {}
     this.merge(values)
 
     return this
   }
 
-  public merge(values: ModelValues<this>) {
+  merge(values: ModelValues<this>) {
     const anyThis = this as any
     const model = this.constructor as ModelClass
 
@@ -114,8 +176,7 @@ export class Model {
           anyThis[key].splice(0, anyThis[key].length, ...(value as any[]))
           return
         }
-      }
-      else if (model.$columns.has(key)) {
+      } else if (model.$columns.has(key)) {
         const column = model.$columns.get(key)!
 
         if (column.deserialize) {
@@ -129,7 +190,7 @@ export class Model {
     return this
   }
 
-  public serialize(): ModelObject {
+  serialize(): ModelObject {
     const model = this.constructor as ModelClass
     const anyThis = this as any
 
@@ -138,20 +199,17 @@ export class Model {
 
       if (model.$relations.has(key)) {
         if (Array.isArray(value)) {
-          value = value.map(item => item.serialize())
-        }
-        else if (value) {
+          value = value.map((item) => item.serialize())
+        } else if (value) {
           value = value.serialize()
         }
-      }
-      else if (model.$columns.has(key)) {
+      } else if (model.$columns.has(key)) {
         const column = model.$columns.get(key)!
 
         if (column.serialize) {
           value = column.serialize(value, key, this)
         }
-      }
-      else if (typeof value === 'object') {
+      } else if (typeof value === 'object') {
         value = JSON.parse(JSON.stringify(value))
       }
 
@@ -161,11 +219,11 @@ export class Model {
     }, {})
   }
 
-  public toJSON() {
+  toJSON() {
     return this.serialize()
   }
 
-  public clone(): this {
+  clone(): this {
     const model = this.constructor as ModelClass
     return model.create(this.serialize()) as this
   }

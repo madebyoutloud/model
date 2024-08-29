@@ -9,9 +9,5 @@ node_modules
 .vscode
 *.log
 
-.npmrc.dev
-
-packages/model/.npmrc
-
 .nuxt
 .output

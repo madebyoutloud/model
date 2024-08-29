@@ -1,5 +1,5 @@
 import type { Dayjs } from 'dayjs'
-import type { Model, ModelClass } from './Model'
+import type { Model, ModelClass } from './model.js'
 
 type PartialModelValue<T> = T extends (infer U)[]
   ? PartialModelValue<U>[]
@@ -8,6 +8,7 @@ type PartialModelValue<T> = T extends (infer U)[]
     : T
 
 type NonFunctionPropertyNames<T> = {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   [K in keyof T]: T[K] extends Function ? never : K;
 }[keyof T]
 
@@ -17,6 +18,8 @@ export type ModelValues<
 > = {
   [K in keyof Filtered]?: PartialModelValue<Filtered[K]>
 }
+
+export type ModelObject = Record<string, any>
 
 export type DecoratorFn = (target: any, property: any) => void
 
@@ -36,7 +39,7 @@ export type OptionalTypedDecorator<PropType> = <
   property: TKey
 ) => void
 
-export type ColumnOptions = {
+export interface ColumnOptions {
   meta: Record<string, any>
   deserialize?: (value: any, attribute: string, model: Model) => any
   serialize?: (value: any, attribute: string, model: Model) => any
@@ -49,13 +52,7 @@ export type ModelColumnOptions = ColumnOptions & {
 
 export type ColumnDecorator = (options?: Partial<ColumnOptions>) => DecoratorFn
 
-export type DateColumnDecorator = (
-  options?: Partial<ColumnOptions>
-) => OptionalTypedDecorator<Dayjs | null>
-
-export type DateTimeColumnDecorator = DateColumnDecorator
-
-export type ModelRelationOptions<T extends ModelClass = ModelClass> = {
+export interface ModelRelationOptions<T extends ModelClass = ModelClass> {
   type: string
   relatedModel: () => T
   map: (value: any, attribute: string, model: Model) => any

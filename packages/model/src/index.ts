@@ -1,11 +1,11 @@
-export * from './utils/defineStaticProperty'
-export * from './utils/compose'
-export * from './utils/model'
+export * from './utils/defineStaticProperty.js'
+export * from './utils/compose.js'
 
-export * from './Model'
+export * from './config.js'
+export * from './model.js'
 
-export * from './decorators/column'
-export * from './decorators/hasOne'
-export * from './decorators/hasMany'
+export * from './decorators/column.js'
+export * from './decorators/has_one.js'
+export * from './decorators/has_many.js'
 
-export * from './types'
+export * from './types.js'

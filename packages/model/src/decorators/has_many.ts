@@ -1,6 +1,5 @@
-import { toModel } from '../utils/model'
-import type { ModelClass } from '../Model'
-import type { OptionalTypedDecorator } from '../types'
+import type { ModelClass } from '../model.js'
+import type { OptionalTypedDecorator } from '../types.js'
 
 export type HasManyDecorator = <
   RelatedModel extends ModelClass,
@@ -16,9 +15,7 @@ export const hasMany: HasManyDecorator = (relatedModel) => {
     Model.$addRelation(property, {
       type: 'hasMany',
       relatedModel,
-      map: value => toModel(value, relatedModel(), true),
+      map: relatedModel().mapper(true),
     })
   }
 }
-
-export const collection = hasMany

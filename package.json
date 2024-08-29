@@ -10,15 +10,13 @@
     "test:library": "pnpm --filter @outloud/model test",
     "release:library": "pnpm --filter @outloud/model release",
     "lint": "eslint . --ext=.ts,.vue --fix",
-    "typecheck": "pnpm --parallel typecheck",
-    "postinstall": "pnpm build:library"
+    "typecheck": "pnpm --parallel typecheck"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.34.1",
-    "@types/node": "^20.5.1",
-    "concurrently": "^7.6.0",
-    "eslint": "^8.32.0",
-    "prettier": "^3.0.2",
-    "typescript": "^5.1.6"
+    "concurrently": "^8.2.2",
+    "eslint": "^9.9.1",
+    "release-it": "^17.6.0",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
   }
 }

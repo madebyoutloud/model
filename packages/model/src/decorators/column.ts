@@ -1,12 +1,9 @@
-import type { ModelClass } from '../Model'
-import type { ColumnDecorator, DateColumnDecorator, DateTimeColumnDecorator } from '../types'
-import { dateColumn } from './date'
-import { dateTimeColumn } from './dateTime'
+import type { ModelClass } from '../model.js'
+import type { ColumnDecorator, ColumnOptions, DecoratorFn } from '../types.js'
+import { date } from './date.js'
+import { dateTime } from './date_time.js'
 
-export const column: ColumnDecorator & {
-  date: DateColumnDecorator
-  dateTime: DateTimeColumnDecorator
-} = (options = {}) => {
+const columnDecorator: ColumnDecorator = (options = {}) => {
   return function decorateAsColumn(target, property) {
     const Model = target.constructor as ModelClass
     Model.$boot()
@@ -14,5 +11,19 @@ export const column: ColumnDecorator & {
   }
 }
 
-column.date = dateColumn
-column.dateTime = dateTimeColumn
+export interface Column {
+  (options?: Partial<ColumnOptions>): DecoratorFn
+  date: ColumnDecorator
+  dateTime: ColumnDecorator
+  extend(name: string, fn: (...args: any[]) => DecoratorFn): void
+}
+
+export const column: Column = Object.assign(columnDecorator, {
+  date,
+  dateTime,
+  extend,
+})
+
+function extend(this: Column, name: string, fn: (...args: any[]) => DecoratorFn) {
+  Object.defineProperty(this, name, { value: fn })
+}
