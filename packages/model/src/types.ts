@@ -1,4 +1,3 @@
-import type { Dayjs } from 'dayjs'
 import type { Model, ModelClass } from './model.js'
 
 type PartialModelValue<T> = T extends (infer U)[]

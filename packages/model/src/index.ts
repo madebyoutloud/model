@@ -1,4 +1,4 @@
-export * from './utils/defineStaticProperty.js'
+export * from './utils/define_static_property.js'
 export * from './utils/compose.js'
 
 export * from './config.js'

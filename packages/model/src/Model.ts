@@ -1,7 +1,7 @@
 // import { proxyHandler } from './proxyHandler'
 import type { ColumnOptions, ModelColumnOptions, ModelObject, ModelRelationOptions, ModelValues } from './types.js'
 import type { NormalizeConstructor } from './utils/compose.js'
-import { defineStaticProperty } from './utils/defineStaticProperty.js'
+import { defineStaticProperty } from './utils/define_static_property.js'
 
 export type ModelClass = typeof Model
 export type NormalizedModel = NormalizeConstructor<ModelClass>
@@ -22,9 +22,11 @@ type MapReturnType<
           ? InstanceType<T> | null
           : InstanceType<T> | InstanceType<T>[] | null
 
-type MapperReturnType<T extends ModelClass, ToArray extends boolean | undefined> = ToArray extends true
+type MapperFormat = 'array' | 'model' | 'nullable'
+
+type MapperReturnType<T extends ModelClass, Format extends MapperFormat> = Format extends 'array'
   ? (data: any[]) => InstanceType<T>[]
-  : ToArray extends false
+  : Format extends 'model'
     ? (data: any) => InstanceType<T>
     : (data: any) => InstanceType<T> | null
 
@@ -131,10 +133,10 @@ export class Model {
 
   static mapper<
     T extends ModelClass,
-    ToArray extends boolean | undefined = undefined,
-    >(this: T, toArray?: ToArray): MapperReturnType<T, ToArray>
-  static mapper<T extends ModelClass>(this: T, toArray?: boolean): (...args: any[]) => any {
-    if (toArray) {
+    Format extends MapperFormat,
+    >(this: T, format: Format): MapperReturnType<T, Format>
+  static mapper<T extends ModelClass>(this: T, format: MapperFormat): (...args: any[]) => any {
+    if (format === 'array') {
       return (data: any[]) => this.map(data, true)
     }
 

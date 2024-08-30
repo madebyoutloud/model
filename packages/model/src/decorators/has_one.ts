@@ -15,7 +15,7 @@ export const hasOne: HasOneDecorator = (relatedModel) => {
     Model.$addRelation(property, {
       type: 'hasOne',
       relatedModel,
-      map: relatedModel().mapper(),
+      map: relatedModel().mapper('model'),
     })
   }
 }

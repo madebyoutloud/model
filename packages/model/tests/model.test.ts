@@ -168,8 +168,8 @@ describe('Model', () => {
   })
 
   it('should create mapper to model', () => {
-    const toArray = Test.mapper(true)
-    const toModel = Test.mapper(false)
+    const toArray = Test.mapper('array')
+    const toModel = Test.mapper('model')
 
     expect(toArray([{}]).at(0)).toBeInstanceOf(Test)
     expect(toModel({})).toBeInstanceOf(Test)
