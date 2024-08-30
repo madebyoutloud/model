@@ -3,7 +3,7 @@
   "title": "Model",
   "description": "A JavaScript library for mapping plain data to models.",
   "private": false,
-  "version": "0.1.3",
+  "version": "1.0.0",
   "sideEffects": false,
   "type": "module",
   "exports": {
