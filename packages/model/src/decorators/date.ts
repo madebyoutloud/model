@@ -9,7 +9,7 @@ function serialize(value: unknown) {
   }
 
   if (!(value instanceof Date)) {
-    value = config.date.format(value)
+    value = config.date.serialize(value)
   }
 
   if (value instanceof Date) {

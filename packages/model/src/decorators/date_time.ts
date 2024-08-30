@@ -8,7 +8,7 @@ export function deserialize(value: any): unknown {
   }
 
   if (value instanceof Date) {
-    return config.date.parse(value)
+    return config.date.deserialize(value)
   }
 
   return value
@@ -20,7 +20,7 @@ function serialize(value: unknown) {
   }
 
   if (!(value instanceof Date)) {
-    value = config.date.format(value)
+    value = config.date.serialize(value)
   }
 
   if (value instanceof Date) {
