@@ -1,4 +1,4 @@
-# Introduction
+# Getting Started
 
 This library provides set of classes and utilities for mapping plan data to class models.
 
@@ -7,6 +7,8 @@ This library provides set of classes and utilities for mapping plan data to clas
 - Composition
 - Related models
 - Related collections
+- Mapping response from API
+- Custom property serialization
 - Cloning
 
 ## Example

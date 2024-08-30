@@ -1,4 +1,3 @@
-import type { Dayjs } from 'dayjs'
 import { type ModelClass, type NormalizedModel, column } from '../src/index.js'
 import type { ColumnOptions, DecoratorFn } from '../src/types.js'
 
@@ -26,10 +25,10 @@ export function enumeration(enumeration: string, options: Partial<ColumnOptions>
 export function Timestamps<T extends NormalizedModel>(Base: T) {
   class Timestamps extends Base {
     @column.dateTime()
-    createdAt: Date
+    declare createdAt: Date
 
     @column.dateTime()
-    updatedAt: Date
+    declare updatedAt: Date
   }
 
   return Timestamps

@@ -125,8 +125,8 @@ describe('Model', () => {
 
     configure({
       date: {
-        parse: (value) => dayjs(value),
-        format: (value: Dayjs) => value.toDate(),
+        deserialize: (value) => dayjs(value),
+        serialize: (value: Dayjs) => value.toDate(),
       },
     })
 

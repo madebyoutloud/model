@@ -1,20 +1,14 @@
 {
-  "title": "Model",
-  "description": "A JavaScript library for mapping plain data to models.",
-  "repository": "https://git.outloud.dev/outloud/libraries/model",
+  "name": "docs",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
   },
   "devDependencies": {
-    "nuxt": "^3"
-  },
-  "dependencies": {
-    "@nuxt-themes/docus": "^1.15.0",
-    "@nuxt/content": "^2.9.0",
-    "@outloud/docs": "^0.1.5"
+    "vitepress": "^1.3.4"
   }
 }

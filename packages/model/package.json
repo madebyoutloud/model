@@ -1,6 +1,7 @@
 {
   "name": "@outloud/model",
-  "description": "",
+  "title": "Model",
+  "description": "A JavaScript library for mapping plain data to models.",
   "private": false,
   "version": "0.1.3",
   "sideEffects": false,
@@ -15,9 +16,18 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "source": "src/index.ts",
   "files": [
     "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://git.outloud.dev/outloud/libraries/model"
+  },
+  "keywords": [
+    "modal",
+    "modals",
+    "vue",
+    "popup"
   ],
   "scripts": {
     "dev": "vitest dev",
@@ -26,7 +36,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "prepack": "pnpm build",
-    "release": "release-it -c .config/release-it.json"
+    "release": "release-it -c .config/release-it.json",
+    "size": "MINIFY=true pnpm build && (gzip -c dist/index.js | wc -c)"
   },
   "devDependencies": {
     "@outloud/eslint-config-typescript": "^1.1.2",

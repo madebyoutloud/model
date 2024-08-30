@@ -1,5 +1,3 @@
-[Guides]{.text-primary.font-semibold}
-
 # Models
 Learn how to use Model class, which is base of all your data mapping.
 
@@ -12,9 +10,9 @@ import { Model } from '@outloud/model'
 class Post extends Model {
   static endpoint = 'v1/posts'
 
-  id: string
-  uid: string
-  title: string
+  declare id: string
+  declare uid: string
+  declare title: string
 
   get endpoint() {
     return `${Post.endpoint}/${this.id}`

@@ -1,21 +1,18 @@
-[Guides]{.text-primary.font-semibold}
-
 # Composition
 
 Library also provides helpers to compose models with shared functionality.
 
 ## Define mixin/trait
 ```ts
-import type { Dayjs } from 'dayjs'
 import { type NormalizedModel, column } from '@outloud/model'
 
-export function Timestamps<T extends NormalizedModel>(Base: T) {
+export function TimestampsTrait<T extends NormalizedModel>(Base: T) {
   class Timestamps extends Base {
     @column.dateTime()
-    createdAt: Dayjs
+    createdAt: Date
 
     @column.dateTime()
-    updatedAt: Dayjs
+    updatedAt: Date
   }
 
   return Timestamps
@@ -27,7 +24,7 @@ export function Timestamps<T extends NormalizedModel>(Base: T) {
 ```ts
 import { Model, compose } from '@outloud/model'
 
-class Post extends compose(Model).with(Timestamps) {
+class Post extends compose(Model).with(TimestampsTrait) {
   id: string
 }
 
@@ -37,5 +34,5 @@ const post = Post.create({
   updatedAt: '2023-11-17T14:40:19.964Z',
 })
 
-post.createdAt.format('DD/MM/YYYY') // '17/11/2023'
+post.createdAt // instanceof Date
 ```

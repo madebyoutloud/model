@@ -1,13 +1,14 @@
-.DS_Store
-.vite-ssg-dist
-.vite-ssg-temp
-*.local
+node_modules
+
 dist
 dist-ssr
-node_modules
-.idea/
-.vscode
-*.log
+cache
 
 .nuxt
 .output
+
+.DS_Store
+*.local
+.idea/
+.vscode
+*.log

@@ -1,7 +1,7 @@
 export const config = {
   date: {
-    parse: (value: Date) => value as any,
-    format: (value: any) => value as Date,
+    deserialize: (value: Date) => value as any,
+    serialize: (value: any) => value as Date,
   },
 }
 
