@@ -15,7 +15,7 @@ export const hasMany: HasManyDecorator = (relatedModel) => {
     Model.$addRelation(property, {
       type: 'hasMany',
       relatedModel,
-      map: relatedModel().mapper('array'),
+      map: (value) => relatedModel().map(value, true),
     })
   }
 }
