@@ -2,11 +2,19 @@
   "name": "@outloud/model",
   "title": "Model",
   "description": "A JavaScript library for mapping plain data to models.",
+  "author": "Outloud (https://outloud.co)",
+  "contributors": [
+    "Andrej Adamcik"
+  ],
   "license": "MIT",
   "private": false,
   "version": "1.0.4",
   "sideEffects": false,
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madebyoutloud/model"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -20,10 +28,6 @@
   "files": [
     "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://git.outloud.dev/outloud/libraries/model"
-  },
   "keywords": [
     "model",
     "data",
