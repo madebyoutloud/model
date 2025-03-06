@@ -1,22 +1,52 @@
 {
-  "private": true,
+  "name": "@outloud/model",
+  "title": "Model",
+  "description": "A JavaScript library for mapping plain data to models.",
+  "license": "MIT",
+  "private": false,
+  "version": "1.0.3",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://git.outloud.dev/outloud/libraries/model"
+  },
+  "keywords": [
+    "model",
+    "data",
+    "transformation",
+    "mapping"
+  ],
   "scripts": {
-    "dev": "concurrently \"pnpm:dev:*\"",
-    "dev:docs": "pnpm --filter docs dev",
-    "build:docs": "pnpm --filter docs build",
-    "generate:docs": "pnpm --filter docs generate",
-    "dev:library": "pnpm --filter @outloud/model dev",
-    "build:library": "pnpm --filter @outloud/model build",
-    "test:library": "pnpm --filter @outloud/model test",
-    "release:library": "pnpm --filter @outloud/model release",
-    "lint": "eslint . --ext=.ts,.vue --fix",
-    "typecheck": "pnpm --parallel typecheck"
+    "dev": "vitest dev",
+    "test": "vitest run",
+    "build": "tsup-node --config .config/tsup.ts && rm -f dist/*.d.cts",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "prepack": "pnpm build",
+    "release": "release-it -c .config/release-it.json",
+    "size": "MINIFY=true pnpm build && (gzip -c dist/index.js | wc -c)"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "eslint": "^9.9.1",
-    "release-it": "^17.6.0",
-    "tsup": "^8.2.4",
-    "typescript": "^5.5.4"
+    "@outloud/eslint-config-typescript": "^1.1.2",
+    "@types/node": "^22.13.9",
+    "dayjs": "^1.11.13",
+    "eslint": "^9.21.0",
+    "release-it": "^18.1.2",
+    "tsup": "^8.4.0",
+    "vitest": "^2.0.5"
   }
 }

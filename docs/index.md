@@ -15,7 +15,7 @@ features:
     details: Only 1.4 kB gzipped.
   - icon: ✅
     title: Full TypeScript support
-    details: Fully typed, even props you pass to your modals.
+    details: Fully typed.
   - icon: 🛠️
     title: Extendable
     details: Library can be easily extended for custom functionality or types.

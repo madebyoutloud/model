@@ -1,5 +1,5 @@
 import { type HeadConfig, defineConfig } from 'vitepress'
-import packageJson from '../../packages/model/package.json'
+import packageJson from '../../package.json'
 
 const webUrl = process.env.WEB_URL ?? ''
 

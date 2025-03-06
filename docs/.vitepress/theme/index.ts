@@ -1,7 +1,7 @@
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
 import './style.css'
-import packageJson from '../../../packages/model/package.json'
+import packageJson from '../../../package.json'
 import Layout from './Layout.vue'
 
 const theme: Theme = {
