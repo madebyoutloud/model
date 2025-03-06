@@ -4,7 +4,7 @@
   "description": "A JavaScript library for mapping plain data to models.",
   "license": "MIT",
   "private": false,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "sideEffects": false,
   "type": "module",
   "exports": {
