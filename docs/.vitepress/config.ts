@@ -119,6 +119,10 @@ export default defineConfig({
             text: 'Decorators',
             link: '/docs/guide/decorators',
           },
+          {
+            text: 'Vue & Nuxt',
+            link: '/docs/guide/vue',
+          },
         ],
       },
       {

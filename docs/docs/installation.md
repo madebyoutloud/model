@@ -24,16 +24,3 @@ Enable `experimentalDecorators` in tsconfig.json.
   }
 }
 ```
-
-### Nuxt
-If you are using Nuxt with version < 3.12, there is a bug in ESBuild and updating tsconfig won't work. Add this to `nuxt.config.ts` or any config with esbuild.
-
-```ts[nuxt.config.ts]
-export default defineNuxtConfig({
-  vite: {
-    esbuild: {
-      tsconfigRaw: {}
-    },
-  }
-})
-```
