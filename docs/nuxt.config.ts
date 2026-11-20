@@ -12,6 +12,11 @@ export default defineNuxtConfig({
     enabled: false,
   },
 
+  // docus adds nuxt-agent-discovery, which needs an origin, not the /model/ base URL
+  agentDiscovery: {
+    siteUrl: 'https://docs.outloud.dev',
+  },
+
   nitro: {
     cloudflare: {
       deployConfig: true,
