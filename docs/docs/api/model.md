@@ -8,6 +8,12 @@ Creates Model from values.
 create(values: ModelValues<Model>): Model;
 ```
 
+### typed
+Returns the Model class typed so its instances also have the properties of `Data`. Types only, it returns the class itself. See [Typing from data](/docs/guide/typing).
+```ts
+typed<Data extends object, T = typeof Model>(): T & (new () => InstanceType<T> & Data);
+```
+
 ### fromJSON
 Creates Model from plain data, pairs with `toJSON()`. An instance of the Model is returned as it is, `null` and `undefined` return `null`.
 ```ts

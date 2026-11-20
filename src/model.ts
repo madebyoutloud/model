@@ -7,10 +7,12 @@ import type {
   ModelObject,
   ModelRelationOptions,
   ModelValues,
+  TypedModelClass,
 } from './types.js'
 import { defineStaticProperty } from './utils/define_static_property.js'
 
 export type ModelClass = typeof Model
+export type AbstractModelClass = (abstract new (...args: any[]) => Model) & Omit<ModelClass, 'prototype'>
 
 export class Model {
   static $isBooted: boolean
@@ -65,6 +67,25 @@ export class Model {
 
   static $addRelation<T extends ModelClass>(name: string, options: ModelRelationOptions<T>) {
     this.$relations.set(name, options)
+  }
+
+  /**
+   * Returns the class typed so its instances also have the properties of `Data`, such as a response type generated
+   * from OpenAPI. It changes only types: the class returned is this one.
+   *
+   * ```ts
+   * class Provider extends Model.typed<ProviderData>() {
+   *   get label() {
+   *     return this.name
+   *   }
+   * }
+   * ```
+   *
+   * TypeScript can't infer the base class once `Data` is given, so on a subclass pass it as well:
+   * `RestModel.typed<ProviderData, typeof RestModel>()`, or redeclare `typed` on the base class with `TypedMethod`.
+   */
+  static typed<Data extends object, T extends AbstractModelClass = ModelClass>(this: T): TypedModelClass<T, Data> {
+    return this as unknown as TypedModelClass<T, Data>
   }
 
   static create<T extends ModelClass>(this: T, values: ModelValues<InstanceType<T>>): InstanceType<T> {

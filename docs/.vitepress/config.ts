@@ -108,6 +108,10 @@ export default defineConfig({
             link: '/docs/guide/relationships',
           },
           {
+            text: 'Typing from data',
+            link: '/docs/guide/typing',
+          },
+          {
             text: 'Composition',
             link: '/docs/guide/composition',
           },

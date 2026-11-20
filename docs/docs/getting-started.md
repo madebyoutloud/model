@@ -8,6 +8,7 @@ This library provides set of classes and utilities for mapping plan data to clas
 - Related models
 - Related collections
 - Mapping response from API
+- Typing models from generated API types
 - Custom property serialization
 - Cloning
 

@@ -1,4 +1,4 @@
-import type { Model, ModelClass } from './model.js'
+import type { AbstractModelClass, Model, ModelClass } from './model.js'
 
 type PartialModelValue<T> = T extends (infer U)[] ? PartialModelValue<U>[] : T extends Model ? ModelValues<T> : T
 
@@ -59,3 +59,30 @@ export interface ModelMapper<T extends Model> {
   (data: ModelObject): T
   (data: ModelObject | null | undefined): T | null
 }
+
+/**
+ * The class `T` with instances that also have the properties of `Data`, as `Model.typed()` returns it.
+ */
+export type TypedModelClass<T extends AbstractModelClass, Data extends object> = Omit<T, 'prototype'> &
+  (new (...args: any[]) => InstanceType<T> & Data) & {
+    prototype: InstanceType<T> & Data
+  }
+
+/**
+ * The type of `Model.typed()` with another default base class. A base class redeclares `typed` with it, so its
+ * subclasses call `typed<Data>()` without passing the class:
+ *
+ * ```ts
+ * abstract class RestModel extends Model {
+ *   declare static typed: TypedMethod<typeof RestModel>
+ * }
+ *
+ * class Project extends RestModel.typed<ProjectData>() {}
+ * ```
+ */
+export type TypedMethod<Default extends AbstractModelClass> = <
+  Data extends object,
+  T extends AbstractModelClass = Default,
+>(
+  this: T,
+) => TypedModelClass<T, Data>
