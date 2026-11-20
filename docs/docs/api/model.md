@@ -38,22 +38,16 @@ mapperArray(): (data: Record<string, any>[] | null | undefined) => Model[];
 
 ## Methods
 
-### fill
-Fill Model data with values.
-```ts
-fill(values: ModelValues<this>): this;
-```
-
 ### merge
-Updates Model data partially with preserving existing values.
+Updates Model data partially with preserving existing values. Keys that only have a getter on the Model are skipped.
 ```ts
 merge(values: ModelValues<this>): this;
 ```
 
-### serialize()
-Serialize model to plain object.
+### toJSON()
+Returns the Model as plain data: columns serialized, relations as plain objects.
 ```ts
-serialize(): Record<string, any>
+toJSON(): Record<string, any>
 ```
 
 ### clone()

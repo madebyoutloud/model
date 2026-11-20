@@ -79,7 +79,6 @@ describe('Model', () => {
 
     const test = Test.create({ ...values })
 
-    expect(test.serialize()).toEqual(values)
     expect(test.toJSON()).toEqual(values)
   })
 
@@ -136,7 +135,7 @@ describe('Model', () => {
       createdAt,
     })
 
-    const serialized = record.serialize()
+    const serialized = record.toJSON()
 
     expect(record.createdAt).toBeTypeOf('object')
     expect(record.createdAt.year()).toBeTypeOf('number')
@@ -206,5 +205,50 @@ describe('Model', () => {
     const record = Static.fromJSON({ createdAt: new Date().toISOString() })
 
     expect(record.createdAt).toBeInstanceOf(Date)
+  })
+
+  it('should skip data for getters without a setter', () => {
+    class WithGetters extends Test {
+      declare first: string
+
+      get label() {
+        return `${this.first}!`
+      }
+
+      get editable() {
+        return this.first
+      }
+
+      set editable(value: string) {
+        this.first = value
+      }
+    }
+
+    const record = WithGetters.fromJSON({ first: 'a', label: 'from api', fullName: 'from api', editable: 'b' })
+
+    expect(record.label).toBe('b!')
+    expect(record.fullName).toBeUndefined()
+    expect(record.first).toBe('b')
+  })
+
+  it('should keep the day of a date in every time zone', () => {
+    class DateOnly extends Model {
+      @column.date()
+      declare day: Date
+    }
+
+    const original = process.env.TZ
+
+    try {
+      for (const tz of ['America/Los_Angeles', 'UTC', 'Europe/Bratislava', 'Pacific/Auckland']) {
+        process.env.TZ = tz
+        const record = DateOnly.fromJSON({ day: '2024-01-15' })
+
+        expect(record.day.getDate()).toBe(15)
+        expect(record.toJSON().day).toBe('2024-01-15')
+      }
+    } finally {
+      process.env.TZ = original
+    }
   })
 })

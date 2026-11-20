@@ -35,6 +35,8 @@ const post = Post.create({
 })
 ```
 
+Data for a property that only has a getter, such as `link` above, is skipped, so an API that adds a field with the same name doesn't break the model.
+
 ## Update model
 To update existing model, because there is new data available you can call `merge` method on your object or simply change the property.
 
@@ -48,10 +50,10 @@ post.title = 'My post - updated'
 ```
 
 ## Serialize model
-You can serialize model back to plain object using `serialize` method.
+`toJSON` returns the model as plain data, with columns serialized. `JSON.stringify` calls it as well.
 
 ```ts
-const json = post.serialize()
+const json = post.toJSON()
 ```
 
 ## Clone model

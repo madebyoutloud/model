@@ -1,4 +1,3 @@
-// import { proxyHandler } from './proxyHandler'
 import { column } from './decorators/column.js'
 import { relation } from './decorators/relation.js'
 import type { ColumnOptions, ModelColumnOptions, ModelMapper, ModelObject, ModelRelationOptions, ModelValues } from './types.js'
@@ -12,8 +11,6 @@ export class Model {
   static $relations: Map<string, ModelRelationOptions>
   static column = column
   static relation = relation
-
-  declare $attributes: ModelObject
 
   static $boot() {
     if (!Object.hasOwn(this, '$isBooted')) {
@@ -48,14 +45,10 @@ export class Model {
   }
 
   static $addColumn(name: string, options: Partial<ColumnOptions>) {
-    const descriptor = Object.getOwnPropertyDescriptor(this.prototype, name)
-
     const column: ModelColumnOptions = {
       serialize: options.serialize,
       deserialize: options.deserialize,
       meta: options.meta ?? {},
-      hasGetter: !!(descriptor && descriptor.get),
-      hasSetter: !!(descriptor && descriptor.set),
     }
 
     this.$columns.set(name, column)
@@ -71,10 +64,7 @@ export class Model {
   }
 
   static create<T extends ModelClass>(this: T, values: ModelValues<InstanceType<T>>): InstanceType<T> {
-    const model = new this() as InstanceType<T>
-    model.fill(values)
-
-    return model
+    return new this().merge(values) as InstanceType<T>
   }
 
   /**
@@ -119,27 +109,20 @@ export class Model {
   constructor() {
     const model = this.constructor as ModelClass
     model.$boot()
-
-    Object.defineProperty(this, '$attributes', {
-      enumerable: false,
-      value: {},
-    })
-
-    // return new Proxy(this, proxyHandler)
   }
 
-  fill(values: ModelValues<this>) {
-    // this.$attributes = {}
-    this.merge(values)
-
-    return this
-  }
-
+  /**
+   * Updates the given values, keeping the others. Keys that only have a getter on the model are skipped, so data
+   * with a field named like a getter doesn't throw.
+   */
   merge(values: ModelValues<this>) {
     const anyThis = this as any
     const model = this.constructor as ModelClass
+    const getters = getterOnlyKeys(model)
 
     Object.keys(values).forEach((key) => {
+      if (getters.has(key)) return
+
       let value = values[key as keyof typeof values]
 
       if (model.$relations.has(key)) {
@@ -165,7 +148,10 @@ export class Model {
     return this
   }
 
-  serialize(): ModelObject {
+  /**
+   * Returns the model as plain data: columns serialized, relations as plain objects.
+   */
+  toJSON(): ModelObject {
     const model = this.constructor as ModelClass
     const anyThis = this as any
 
@@ -174,9 +160,9 @@ export class Model {
 
       if (model.$relations.has(key)) {
         if (Array.isArray(value)) {
-          value = value.map((item) => item.serialize())
+          value = value.map(toJSON)
         } else if (value) {
-          value = value.serialize()
+          value = toJSON(value)
         }
       } else if (model.$columns.has(key)) {
         const column = model.$columns.get(key)!
@@ -194,13 +180,41 @@ export class Model {
     }, {})
   }
 
-  toJSON() {
-    return this.serialize()
-  }
-
+  /**
+   * Returns a new instance with the same data, through `toJSON()`.
+   */
   clone(): this {
     const model = this.constructor as ModelClass
-    return model.create(this.serialize()) as this
+    return model.create(this.toJSON()) as this
   }
+}
+
+function toJSON(value: any) {
+  return typeof value?.toJSON === 'function' ? value.toJSON() : value
+}
+
+const getterOnlyCache = new WeakMap<ModelClass, Set<string>>()
+
+/**
+ * Names of properties the model's classes define with a getter and no setter, which can't be assigned.
+ */
+function getterOnlyKeys(model: ModelClass) {
+  let keys = getterOnlyCache.get(model)
+  if (keys) return keys
+
+  keys = new Set()
+  const seen = new Set<string>()
+
+  for (let proto = model.prototype; proto && proto !== Object.prototype; proto = Object.getPrototypeOf(proto)) {
+    for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(proto))) {
+      if (seen.has(key)) continue
+      seen.add(key)
+
+      if (descriptor.get && !descriptor.set) keys.add(key)
+    }
+  }
+
+  getterOnlyCache.set(model, keys)
+  return keys
 }
 

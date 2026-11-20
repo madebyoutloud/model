@@ -44,10 +44,7 @@ export interface ColumnOptions {
   serialize?: (value: any, attribute: string, model: Model) => any
 }
 
-export type ModelColumnOptions = ColumnOptions & {
-  hasGetter: boolean
-  hasSetter: boolean
-}
+export type ModelColumnOptions = ColumnOptions
 
 export type ColumnDecorator = (options?: Partial<ColumnOptions>) => DecoratorFn
 

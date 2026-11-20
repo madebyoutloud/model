@@ -1,30 +1,32 @@
 # Vue & Nuxt
 
-If you want to improve the type performance and readability inside `ref`, you can create a `types.d.ts` file in your project and add the following code:
+## Refs
 
-```ts[types.d.ts]
-import type { RawSymbol } from '@vue/reactivity'
+Vue unwraps refs nested in objects it makes reactive, which changes the types of models kept in `ref()`. Declare `Model` as a type Vue doesn't unwrap, in any `.d.ts` or `.ts` file of the project:
 
-declare module '@outloud/model' {
-  interface Model {
-    [RawSymbol]?: true
+```ts [types.ts]
+import type { Model } from '@outloud/model'
+
+declare module '@vue/reactivity' {
+  export interface RefUnwrapBailTypes {
+    model: Model
   }
 }
 
 export {}
 ```
 
-If the `@vue/reactivity` dependency is not recognized (usually when using `pnpm`), install it as dev dependency.
+If `@vue/reactivity` isn't found (usually with `pnpm`), install it as a dev dependency.
 
 ## Nuxt
-If you are using Nuxt, there is a bug in ESBuild and updating tsconfig won't work. Add this to `nuxt.config.ts` or any config with esbuild.
 
-```ts[nuxt.config.ts]
-export default defineNuxtConfig({
-  vite: {
-    esbuild: {
-      tsconfigRaw: {}
-    },
-  }
+Enable `experimentalDecorators` in `typescript.tsConfig.compilerOptions` of `nuxt.config.ts`.
+
+Model instances returned by `useAsyncData`, `useState` or Pinia stores during the server render reach the browser as plain objects. Revive them in a payload plugin, with a key per model:
+
+```ts [app/plugins/models.ts]
+export default definePayloadPlugin(() => {
+  definePayloadReducer('User', (value) => value?.constructor === User && value.toJSON())
+  definePayloadReviver('User', (data) => User.fromJSON(data))
 })
 ```
