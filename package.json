@@ -1,39 +1,38 @@
 {
   "name": "@outloud/model",
-  "title": "Model",
-  "description": "A JavaScript library for mapping plain data to models.",
-  "author": "Outloud (https://outloud.co)",
-  "contributors": [
-    "Andrej Adamcik"
-  ],
-  "license": "MIT",
-  "private": false,
-  "version": "1.0.5",
-  "sideEffects": false,
   "type": "module",
+  "version": "1.0.5",
+  "description": "Maps plain data, such as API responses, to typed model classes with dates, relationships and getters.",
+  "homepage": "https://docs.outloud.dev/model",
   "repository": {
     "type": "git",
-    "url": "https://github.com/madebyoutloud/model"
+    "url": "git+https://github.com/madebyoutloud/model.git"
   },
+  "license": "MIT",
+  "author": "Outloud (https://outloud.co)",
+  "sideEffects": false,
   "engines": {
     "node": ">=20"
   },
+  "files": [
+    "dist",
+    "migrations",
+    "skills"
+  ],
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "keywords": [
     "model",
     "data",
-    "transformation",
-    "mapping"
+    "mapping",
+    "api",
+    "typescript"
   ],
   "scripts": {
     "dev": "vitest dev",
@@ -45,7 +44,7 @@
     "fmt:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
     "prepack": "pnpm build",
-    "release": "release-it -c .config/release-it.json"
+    "release": "release-it"
   },
   "devDependencies": {
     "@outloud/oxfmt-config": "^2.0.2",

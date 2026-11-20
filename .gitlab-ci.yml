@@ -1,21 +1,61 @@
-stages:
-  - triggers
+spec:
+  inputs:
+    action:
+      description: What to run, auto runs what the branch or tag runs
+      default: auto
+      options: [auto, publish, docs]
+---
+stages: [test, build, deploy, publish]
 
-library:
-  stage: triggers
-  trigger:
-    include: .gitlab/library.yml
-    strategy: depend
-  rules:
-    - if: $CI_COMMIT_TAG =~ /^v.*$/
+include:
+  - component: $OUTLOUD_CI/workflow@5
+    inputs:
+      action: $[[ inputs.action ]]
 
-docs:
-  stage: triggers
-  trigger:
-    include: .gitlab/docs.yml
-    strategy: depend
-  rules:
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-      changes:
-        - docs/**/*
-        - .gitlab/docs.yml
+  # test
+  - component: $OUTLOUD_CI/test-nodejs@5
+    inputs:
+      name: lint
+      command: lint
+  - component: $OUTLOUD_CI/test-nodejs@5
+    inputs:
+      name: typecheck
+      command: typecheck
+  - component: $OUTLOUD_CI/test-nodejs@5
+    inputs:
+      name: test
+      command: test
+
+  - component: $OUTLOUD_CI/publish-npm@5
+    inputs:
+      registry: [npm, gitlab]
+
+  - component: $OUTLOUD_CI/build-nodejs@5
+    inputs:
+      rules:
+        - if: !reference [.rules, default_branch]
+          changes:
+            - docs/**/*
+        - if: $RUN_ACTION == "docs"
+      script:
+        - |
+          cd docs
+          export NUXT_APP_BASE_URL=/model/
+          pnpm install
+          pnpm build --preset=cloudflare_module
+      output:
+        - docs/.output
+        - docs/.wrangler
+
+  - component: $OUTLOUD_CI/deploy-cloudflare@5
+    inputs:
+      environment: production
+      script:
+        - |
+          cd docs
+          wrangler deploy --keep-vars --name=docs-model
+      rules:
+        - if: !reference [.rules, default_branch]
+          changes:
+            - docs/**/*
+        - if: $RUN_ACTION == "docs"

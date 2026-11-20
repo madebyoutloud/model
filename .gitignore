@@ -1,14 +1,14 @@
 node_modules
+.npmrc
 
+coverage
 dist
-dist-ssr
-cache
+.vscode/
+tmp/*
 
-.nuxt
-.output
-
-.DS_Store
-*.local
-.idea/
-.vscode
+.DS_STORE
+.idea
+idea.md
 *.log
+
+!.gitkeep
