@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import dayjs, { type Dayjs } from 'dayjs'
 import { Model, column, config, configure } from '../src/index.js'
 import { Enumerable, Timestamps, enumeration } from './utils.js'
@@ -157,6 +157,25 @@ describe('Model', () => {
     expect(tests.length).toBe(1)
     expect(tests.at(0)).toBeInstanceOf(Test)
     expect(Test.fromJSON(test)).toBe(test)
+  })
+
+  it('should map null and undefined', () => {
+    const nullable = null as { value: string } | null
+    const missing = undefined as { value: string }[] | undefined
+
+    expect(Test.fromJSON(nullable)).toBeNull()
+    expect(Test.fromJSON(undefined)).toBeNull()
+    expect(Test.fromArray(missing)).toEqual([])
+    expect(Test.fromArray(null)).toEqual([])
+    expect(Test.mapperJSON()(nullable)).toBeNull()
+    expect(Test.mapperArray()(missing)).toEqual([])
+
+    expectTypeOf(Test.fromJSON({ value: 'test' })).toEqualTypeOf<Test>()
+    expectTypeOf(Test.fromJSON({} as any)).toEqualTypeOf<Test>()
+    expectTypeOf(Test.fromJSON(nullable)).toEqualTypeOf<Test | null>()
+    expectTypeOf(Test.fromArray(missing)).toEqualTypeOf<Test[]>()
+    expectTypeOf(Test.mapperJSON()({})).toEqualTypeOf<Test>()
+    expectTypeOf(Test.mapperJSON()(nullable)).toEqualTypeOf<Test | null>()
   })
 
   it('should create from JSON', () => {

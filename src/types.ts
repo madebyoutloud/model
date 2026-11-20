@@ -68,3 +68,11 @@ export interface ModelRelationOptions<T extends ModelClass = ModelClass> {
  * ```
  */
 export type NormalizedModel = (new (...args: any[]) => InstanceType<ModelClass>) & Omit<ModelClass, 'constructor'>
+
+/**
+ * Creates the model from data. The result is nullable only when the data is.
+ */
+export interface ModelMapper<T extends Model> {
+  (data: ModelObject): T
+  (data: ModelObject | null | undefined): T | null
+}

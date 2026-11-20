@@ -1,7 +1,7 @@
 // import { proxyHandler } from './proxyHandler'
 import { column } from './decorators/column.js'
 import { relation } from './decorators/relation.js'
-import type { ColumnOptions, ModelColumnOptions, ModelObject, ModelRelationOptions, ModelValues } from './types.js'
+import type { ColumnOptions, ModelColumnOptions, ModelMapper, ModelObject, ModelRelationOptions, ModelValues } from './types.js'
 import { defineStaticProperty } from './utils/define_static_property.js'
 
 export type ModelClass = typeof Model
@@ -80,32 +80,39 @@ export class Model {
   /**
    * Creates the model from plain data, such as an API response. An instance of the model is returned as it is.
    * Pairs with `toJSON()`, so the model fits code that revives classes by `fromJSON()`, such as a Nuxt
-   * payload reviver.
+   * payload reviver. `null` and `undefined` return `null`.
    */
-  static fromJSON<T extends ModelClass>(this: T, values: ModelObject): InstanceType<T> {
+  static fromJSON<T extends ModelClass>(this: T, values: ModelObject): InstanceType<T>
+  static fromJSON<T extends ModelClass>(this: T, values: ModelObject | null | undefined): InstanceType<T> | null
+  static fromJSON<T extends ModelClass>(this: T, values: ModelObject | null | undefined): InstanceType<T> | null {
+    if (values === null || values === undefined) return null
     if (values instanceof this) return values as InstanceType<T>
 
     return this.create(values as ModelValues<InstanceType<T>>)
   }
 
   /**
-   * Creates a model from each item of the array.
+   * Creates a model from each item of the array. `null` and `undefined` return an empty array.
    */
-  static fromArray<T extends ModelClass>(this: T, items: ModelObject[]): InstanceType<T>[] {
+  static fromArray<T extends ModelClass>(this: T, items: ModelObject[] | null | undefined): InstanceType<T>[] {
+    if (items === null || items === undefined) return []
+
     return items.map(item => this.fromJSON(item))
   }
 
   /**
    * Returns a function that creates the model from data, for `transform` options and `.then()`.
+   * `null` and `undefined` return `null`.
    */
-  static mapperJSON<T extends ModelClass>(this: T): (data: ModelObject) => InstanceType<T> {
-    return data => this.fromJSON(data)
+  static mapperJSON<T extends ModelClass>(this: T): ModelMapper<InstanceType<T>> {
+    return ((data: ModelObject | null | undefined) => this.fromJSON(data)) as ModelMapper<InstanceType<T>>
   }
 
   /**
    * Returns a function that creates a model from each item of the array, for `transform` options and `.then()`.
+   * `null` and `undefined` return an empty array.
    */
-  static mapperArray<T extends ModelClass>(this: T): (data: ModelObject[]) => InstanceType<T>[] {
+  static mapperArray<T extends ModelClass>(this: T): (data: ModelObject[] | null | undefined) => InstanceType<T>[] {
     return data => this.fromArray(data)
   }
 

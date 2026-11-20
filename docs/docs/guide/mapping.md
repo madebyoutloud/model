@@ -32,10 +32,14 @@ User.fromJSON(JSON.parse(JSON.stringify(user))) // User
 User.fromArray([{ id: '1' }, { id: '2' }]) // User[]
 ```
 
-Handle `null` before mapping when the API can return it:
+## Null and undefined
+
+`fromJSON` returns `null` for `null` and `undefined`, and `fromArray` returns an empty array. The result is nullable only when the data's type is:
 
 ```ts
-const user = data ? User.fromJSON(data) : null
+User.fromJSON(data as object) // User
+User.fromJSON(data as object | null) // User | null
+User.fromArray(data as object[] | null) // User[]
 ```
 
 ## Mappers
@@ -45,6 +49,7 @@ const user = data ? User.fromJSON(data) : null
 ```ts
 const toUser = User.mapperJSON()
 toUser({}) // User
+toUser(null as object | null) // User | null
 
 const toUsers = User.mapperArray()
 toUsers([{}, {}]) // User[]

@@ -28,13 +28,7 @@ export const relation: RelationDecorator = (relatedModel, options = {}) => {
     Model.$addRelation(property, {
       type: many ? 'hasMany' : 'hasOne',
       relatedModel,
-      map: (value) => {
-        if (value === null || value === undefined) {
-          return many ? [] : null
-        }
-
-        return many ? relatedModel().fromArray(value) : relatedModel().fromJSON(value)
-      },
+      map: value => many ? relatedModel().fromArray(value) : relatedModel().fromJSON(value),
     })
   }
 }
