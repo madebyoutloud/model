@@ -126,6 +126,15 @@ export default defineConfig({
         ],
       },
       {
+        text: 'Upgrade',
+        items: [
+          {
+            text: 'Upgrade to 2.0',
+            link: '/docs/upgrade/v2',
+          },
+        ],
+      },
+      {
         text: 'API',
         items: [
           {

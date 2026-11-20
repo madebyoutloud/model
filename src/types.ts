@@ -56,3 +56,15 @@ export interface ModelRelationOptions<T extends ModelClass = ModelClass> {
   relatedModel: () => T
   map: (value: any, attribute: string, model: Model) => any
 }
+
+/**
+ * A model class whose constructor accepts any arguments, which TypeScript requires of a mixin's base class.
+ *
+ * ```ts
+ * function Timestamps<T extends NormalizedModel>(Base: T) {
+ *   class Timestamps extends Base {}
+ *   return Timestamps
+ * }
+ * ```
+ */
+export type NormalizedModel = (new (...args: any[]) => InstanceType<ModelClass>) & Omit<ModelClass, 'constructor'>

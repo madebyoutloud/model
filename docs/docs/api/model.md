@@ -9,21 +9,27 @@ create(values: ModelValues<Model>): Model;
 ```
 
 ### fromJSON
-Creates Model from unknown JSON.
+Creates Model from plain data, pairs with `toJSON()`. An instance of the Model is returned as it is.
 ```ts
 fromJSON(values: Record<string, any>): Model;
 ```
 
-### map
-Maps data to Model or array of Models.
+### fromArray
+Creates Model from each item.
 ```ts
-map(data: any, toArray?: boolean): Model | Model[] | null;
+fromArray(items: Record<string, any>[]): Model[];
 ```
 
-### mapper
-Creates mapper for future mapping of data to Models.
+### mapperJSON
+Returns a function that creates Model from data.
 ```ts
-mapper(format: 'array' | 'model' | 'nullable'): (data: any) => Model | Model[] | null;
+mapperJSON(): (data: Record<string, any>) => Model;
+```
+
+### mapperArray
+Returns a function that creates Model from each item.
+```ts
+mapperArray(): (data: Record<string, any>[]) => Model[];
 ```
 
 ## Methods

@@ -1,39 +1,17 @@
 // import { proxyHandler } from './proxyHandler'
+import { column } from './decorators/column.js'
+import { relation } from './decorators/relation.js'
 import type { ColumnOptions, ModelColumnOptions, ModelObject, ModelRelationOptions, ModelValues } from './types.js'
-import type { NormalizeConstructor } from './utils/compose.js'
 import { defineStaticProperty } from './utils/define_static_property.js'
 
 export type ModelClass = typeof Model
-export type NormalizedModel = NormalizeConstructor<ModelClass>
-
-type MapReturnType<
-  T extends ModelClass,
-  Data extends ModelObject | ModelObject[] | null | undefined,
-  ToArray extends boolean | undefined = undefined,
-> = ToArray extends true
-  ? InstanceType<T>[]
-  : ToArray extends false
-    ? (Data extends ModelObject ? InstanceType<T> : InstanceType<T> | null)
-    : Data extends any[]
-      ? InstanceType<T>[]
-      : Data extends ModelObject
-        ? InstanceType<T>
-        : Data extends ModelObject | null | undefined
-          ? InstanceType<T> | null
-          : InstanceType<T> | InstanceType<T>[] | null
-
-type MapperFormat = 'array' | 'model' | 'nullable'
-
-type MapperReturnType<T extends ModelClass, Format extends MapperFormat> = Format extends 'array'
-  ? (data: any[]) => InstanceType<T>[]
-  : Format extends 'model'
-    ? (data: any) => InstanceType<T>
-    : (data: any) => InstanceType<T> | null
 
 export class Model {
   static $isBooted: boolean
   static $columns: Map<string, ModelColumnOptions>
   static $relations: Map<string, ModelRelationOptions>
+  static column = column
+  static relation = relation
 
   declare $attributes: ModelObject
 
@@ -99,48 +77,36 @@ export class Model {
     return model
   }
 
+  /**
+   * Creates the model from plain data, such as an API response. An instance of the model is returned as it is.
+   * Pairs with `toJSON()`, so the model fits code that revives classes by `fromJSON()`, such as a Nuxt
+   * payload reviver.
+   */
   static fromJSON<T extends ModelClass>(this: T, values: ModelObject): InstanceType<T> {
-    if (values instanceof this) {
-      return values as InstanceType<T>
-    }
+    if (values instanceof this) return values as InstanceType<T>
 
     return this.create(values as ModelValues<InstanceType<T>>)
   }
 
-  static map<
-    T extends ModelClass,
-    Data extends ModelObject | ModelObject[] | null | undefined = undefined,
-    ToArray extends boolean | undefined = undefined,
-  >(this: T, data?: Data, toArray?: ToArray): MapReturnType<T, Data, ToArray>
-
-  static map<T extends ModelClass>(this: T, data?: any, toArray?: boolean): InstanceType<T>[] | InstanceType<T> | null {
-    if (toArray === false && Array.isArray(data)) {
-      data = data[0]
-    } else if (toArray === true && !Array.isArray(data)) {
-      data = data ? [data] : []
-    }
-
-    if (Array.isArray(data)) {
-      return data.map((item) => this.fromJSON(item))
-    }
-
-    if (data === null || data === undefined) {
-      return null
-    }
-
-    return this.fromJSON(data)
+  /**
+   * Creates a model from each item of the array.
+   */
+  static fromArray<T extends ModelClass>(this: T, items: ModelObject[]): InstanceType<T>[] {
+    return items.map(item => this.fromJSON(item))
   }
 
-  static mapper<
-    T extends ModelClass,
-    Format extends MapperFormat,
-    >(this: T, format: Format): MapperReturnType<T, Format>
-  static mapper<T extends ModelClass>(this: T, format: MapperFormat): (...args: any[]) => any {
-    if (format === 'array') {
-      return (data: any[]) => this.map(data, true)
-    }
+  /**
+   * Returns a function that creates the model from data, for `transform` options and `.then()`.
+   */
+  static mapperJSON<T extends ModelClass>(this: T): (data: ModelObject) => InstanceType<T> {
+    return data => this.fromJSON(data)
+  }
 
-    return (data: any) => this.map(data, false)
+  /**
+   * Returns a function that creates a model from each item of the array, for `transform` options and `.then()`.
+   */
+  static mapperArray<T extends ModelClass>(this: T): (data: ModelObject[]) => InstanceType<T>[] {
+    return data => this.fromArray(data)
   }
 
   constructor() {
@@ -230,3 +196,4 @@ export class Model {
     return model.create(this.serialize()) as this
   }
 }
+

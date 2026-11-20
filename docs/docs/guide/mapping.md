@@ -1,86 +1,56 @@
 # Mapping
 
-Model class provides several method for seamless mapping of raw JSON data.
+Model classes create instances from plain data, such as API responses.
 
-## Create from unknown JSON data
+## From object
 
-To create model from unknown JSON data use `fromJSON` method. This will always create single instance of model.
+`fromJSON` creates one instance. It pairs with `toJSON()`, so code that revives classes by `fromJSON()`, such as a Nuxt payload reviver, works with models.
 
 ::: tip
-If the provided data is already instance of Model, it will return the instance itself, without re-creating new one.
+An instance of the model is returned as it is, without creating a new one.
 :::
-
 
 ```ts
 import { Model } from '@outloud/model'
 
-class User {
-  id: string
+class User extends Model {
+  declare id: string
 }
 
 const data: any = {} // data from API
 const user = User.fromJSON(data)
 
 User.fromJSON(user) === user // true
+User.fromJSON(JSON.parse(JSON.stringify(user))) // User
 ```
 
-## Array and optional mapping
+## From array
 
-`map` method allows you to dynamically create array of Models or nullable instances.
-
+`fromArray` creates an instance from each item.
 
 ```ts
-import { Model } from '@outloud/model'
-
-class User {
-  id: string
-}
-
-User.map({} as Record<string, unknown>) // User
-User.map({} as Record<string, unknown> | null) // User or null
-User.map([]) // User[]
+User.fromArray([{ id: '1' }, { id: '2' }]) // User[]
 ```
 
-Sometimes you might not know what format the response might have, in this case you can force map the input.
-If you force map to single instance, but the provided data is array, first element is used.
+Handle `null` before mapping when the API can return it:
 
 ```ts
-
-// force map to array
-User.map({} as any, true) // User[] with 1 element
-User.map(null as any, true) // User[] with 0 elements
-User.map([{}] as any, true) // User[] with 1 element
-
-// force map to single instance
-User.map({} as any, false) // User | null
-User.map(null as any, false) // User | null
-User.map([] as any, false) // User | null
+const user = data ? User.fromJSON(data) : null
 ```
 
-## Creating mappers
+## Mappers
 
-If you need to create mapper that will create Models as needed, you can use `mapper` method.
-
+`mapperJSON` and `mapperArray` return functions to pass to `transform` options or `.then()`.
 
 ```ts
-import { Model } from '@outloud/model'
+const toUser = User.mapperJSON()
+toUser({}) // User
 
-class User {
-  id: string
-}
-
-const arrayMapper = User.mapper('array')
-arrayMapper([{}, {}]) // User[]
-
-const modelMapper = User.mapper('model')
-modelMapper({}) // User
-
-const optionalMapper = User.mapper('nullable')
-optionalMapper({}) // User | null
-
+const toUsers = User.mapperArray()
+toUsers([{}, {}]) // User[]
 
 // for example in Nuxt
-useAsyncData(() => fetch('/v1/posts'), {
-  transform: User.mapper('array')
+useAsyncData(() => $fetch('/v1/users'), {
+  transform: User.mapperArray(),
 })
 ```

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import dayjs, { type Dayjs } from 'dayjs'
-import { Model, column, compose, config, configure } from '../src/index.js'
+import { Model, column, config, configure } from '../src/index.js'
 import { Enumerable, Timestamps, enumeration } from './utils.js'
 
 class Test extends Model {
@@ -30,7 +30,7 @@ class Extended extends Test {
   declare createdAt: Date
 }
 
-class Composed extends compose(Extended).with(Enumerable, Timestamps) {
+class Composed extends Enumerable(Timestamps(Extended)) {
   @enumeration('test')
   declare type: string
 }
@@ -62,7 +62,7 @@ describe('Model', () => {
       value,
       name,
       isExtended: true,
-      createdAt: dayjs(),
+      createdAt: new Date(),
     })
 
     expect(extended.value).toBe(value)
@@ -121,7 +121,7 @@ describe('Model', () => {
   })
 
   it('should parse/format dates', () => {
-    const originalOptions = config.date
+    const originalOptions = { ...config.date }
 
     configure({
       date: {
@@ -148,30 +148,44 @@ describe('Model', () => {
     configure({ date: originalOptions })
   })
 
-  it('should map to model', () => {
-    const test = Test.map({
-      value: 'test',
-    })
-
-    const tests = Test.map([
-      {
-        value: 'test',
-      },
-    ])
-
-    const mapped = Test.create({})
+  it('should create from object and array', () => {
+    const test = Test.fromJSON({ value: 'test' })
+    const tests = Test.fromArray([{ value: 'test' }])
 
     expect(test).toBeInstanceOf(Test)
+    expect(test.value).toBe('test')
     expect(tests.length).toBe(1)
     expect(tests.at(0)).toBeInstanceOf(Test)
-    expect(mapped).toBe(Test.map(mapped))
+    expect(Test.fromJSON(test)).toBe(test)
   })
 
-  it('should create mapper to model', () => {
-    const toArray = Test.mapper('array')
-    const toModel = Test.mapper('model')
+  it('should create from JSON', () => {
+    const test = Test.fromJSON({ value: 'test' })
 
-    expect(toArray([{}]).at(0)).toBeInstanceOf(Test)
-    expect(toModel({})).toBeInstanceOf(Test)
+    expect(test).toBeInstanceOf(Test)
+    expect(Test.fromJSON(JSON.parse(JSON.stringify(test)))).toEqual(test)
+    expect(Test.fromJSON(test)).toBe(test)
+  })
+
+  it('should create mappers', () => {
+    const toModel = Test.mapperJSON()
+    const toArray = Test.mapperArray()
+
+    const test: Test = toModel({ value: 'test' })
+    const tests: Test[] = toArray([{}])
+
+    expect(test).toBeInstanceOf(Test)
+    expect(tests.at(0)).toBeInstanceOf(Test)
+  })
+
+  it('should define columns through the model', () => {
+    class Static extends Model {
+      @Model.column.dateTime()
+      declare createdAt: Date
+    }
+
+    const record = Static.fromJSON({ createdAt: new Date().toISOString() })
+
+    expect(record.createdAt).toBeInstanceOf(Date)
   })
 })

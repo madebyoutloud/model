@@ -1,31 +1,39 @@
 # Composition
 
-Library also provides helpers to compose models with shared functionality.
+Share columns and methods between models with mixins: functions that take a model class and return a class extending it.
 
-## Define mixin/trait
+## Define a mixin
+TypeScript requires a mixin's base class to accept any constructor arguments. Type the base as `NormalizedModel`.
+
 ```ts
 import { type NormalizedModel, column } from '@outloud/model'
 
-export function TimestampsTrait<T extends NormalizedModel>(Base: T) {
+export function Timestamps<T extends NormalizedModel>(Base: T) {
   class Timestamps extends Base {
     @column.dateTime()
-    createdAt: Date
+    declare createdAt: Date
 
     @column.dateTime()
-    updatedAt: Date
+    declare updatedAt: Date
   }
 
   return Timestamps
 }
 ```
 
-## Compose model
+## Use it
+
+Wrap the base class. Nest the calls to apply several mixins.
 
 ```ts
-import { Model, compose } from '@outloud/model'
+import { Model } from '@outloud/model'
 
-class Post extends compose(Model).with(TimestampsTrait) {
-  id: string
+class Post extends Timestamps(Model) {
+  declare id: string
+}
+
+class Comment extends SoftDeletes(Timestamps(Model)) {
+  declare id: string
 }
 
 const post = Post.create({
