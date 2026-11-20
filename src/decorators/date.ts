@@ -1,6 +1,6 @@
-import type { ColumnDecorator } from '../types.js'
-import type { ModelClass } from '../model.js'
 import { config } from '../config.js'
+import type { ModelClass } from '../model.js'
+import type { ColumnDecorator } from '../types.js'
 import { deserialize as deserializeDateTime } from './date_time.js'
 
 const datePattern = /^(\d{4})-(\d{2})-(\d{2})$/

@@ -1,6 +1,13 @@
 import { column } from './decorators/column.js'
 import { relation } from './decorators/relation.js'
-import type { ColumnOptions, ModelColumnOptions, ModelMapper, ModelObject, ModelRelationOptions, ModelValues } from './types.js'
+import type {
+  ColumnOptions,
+  ModelColumnOptions,
+  ModelMapper,
+  ModelObject,
+  ModelRelationOptions,
+  ModelValues,
+} from './types.js'
 import { defineStaticProperty } from './utils/define_static_property.js'
 
 export type ModelClass = typeof Model
@@ -45,21 +52,18 @@ export class Model {
   }
 
   static $addColumn(name: string, options: Partial<ColumnOptions>) {
-    const column: ModelColumnOptions = {
+    const columnOptions: ModelColumnOptions = {
       serialize: options.serialize,
       deserialize: options.deserialize,
       meta: options.meta ?? {},
     }
 
-    this.$columns.set(name, column)
+    this.$columns.set(name, columnOptions)
 
-    return column
+    return columnOptions
   }
 
-  static $addRelation<T extends ModelClass>(
-    name: string,
-    options: ModelRelationOptions<T>,
-  ) {
+  static $addRelation<T extends ModelClass>(name: string, options: ModelRelationOptions<T>) {
     this.$relations.set(name, options)
   }
 
@@ -87,7 +91,7 @@ export class Model {
   static fromArray<T extends ModelClass>(this: T, items: ModelObject[] | null | undefined): InstanceType<T>[] {
     if (items === null || items === undefined) return []
 
-    return items.map(item => this.fromJSON(item))
+    return items.map((item) => this.fromJSON(item))
   }
 
   /**
@@ -103,7 +107,7 @@ export class Model {
    * `null` and `undefined` return an empty array.
    */
   static mapperArray<T extends ModelClass>(this: T): (data: ModelObject[] | null | undefined) => InstanceType<T>[] {
-    return data => this.fromArray(data)
+    return (data) => this.fromArray(data)
   }
 
   constructor() {
@@ -135,10 +139,10 @@ export class Model {
           return
         }
       } else if (model.$columns.has(key)) {
-        const column = model.$columns.get(key)!
+        const columnOptions = model.$columns.get(key)!
 
-        if (column.deserialize) {
-          value = column.deserialize(value, key, this)
+        if (columnOptions.deserialize) {
+          value = columnOptions.deserialize(value, key, this)
         }
       }
 
@@ -165,10 +169,10 @@ export class Model {
           value = toJSON(value)
         }
       } else if (model.$columns.has(key)) {
-        const column = model.$columns.get(key)!
+        const columnOptions = model.$columns.get(key)!
 
-        if (column.serialize) {
-          value = column.serialize(value, key, this)
+        if (columnOptions.serialize) {
+          value = columnOptions.serialize(value, key, this)
         }
       } else if (typeof value === 'object') {
         value = JSON.parse(JSON.stringify(value))
@@ -217,4 +221,3 @@ function getterOnlyKeys(model: ModelClass) {
   getterOnlyCache.set(model, keys)
   return keys
 }
-

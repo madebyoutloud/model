@@ -8,10 +8,7 @@ type AbstractConstructor = abstract new (...args: any[]) => any
 /**
  * Define static properties on a class with inheritance in play.
  */
-export function defineStaticProperty<
-  T extends Constructor | AbstractConstructor,
-  Prop extends keyof T,
->(
+export function defineStaticProperty<T extends Constructor | AbstractConstructor, Prop extends keyof T>(
   self: T,
   BaseClass: Constructor | AbstractConstructor,
   {
@@ -29,9 +26,9 @@ export function defineStaticProperty<
   }
 
   /**
-     * Class is inhering the base class directly and hence we don't have to
-     * copy any properties
-     */
+   * Class is inhering the base class directly and hence we don't have to
+   * copy any properties
+   */
   if (Object.getPrototypeOf(self.prototype) === BaseClass.prototype || strategy === 'define') {
     Object.defineProperty(self, propertyName, {
       value: defaultValue,

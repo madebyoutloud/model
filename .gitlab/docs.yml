@@ -35,7 +35,7 @@ deploy:docs:
   resource_group: docs
   image:
     name: amazon/aws-cli
-    entrypoint: [""]
+    entrypoint: ['']
   variables:
     AWS_AMPLIFY_ENV: main
   script:

@@ -1,5 +1,5 @@
-import { describe, expect, expectTypeOf, it } from 'vitest'
 import dayjs, { type Dayjs } from 'dayjs'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import { Model, column, config, configure } from '../src/index.js'
 import { Enumerable, Timestamps, enumeration } from './utils.js'
 

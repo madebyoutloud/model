@@ -12,7 +12,7 @@ export type RelationDecorator = <
   Result = InstanceType<RelatedModel>,
 >(
   model: () => RelatedModel,
-  options?: RelationOptions<Many>
+  options?: RelationOptions<Many>,
 ) => OptionalTypedDecorator<Many extends true ? Result[] : Result | null>
 
 /**
@@ -28,7 +28,7 @@ export const relation: RelationDecorator = (relatedModel, options = {}) => {
     Model.$addRelation(property, {
       type: many ? 'hasMany' : 'hasOne',
       relatedModel,
-      map: value => many ? relatedModel().fromArray(value) : relatedModel().fromJSON(value),
+      map: (value) => (many ? relatedModel().fromArray(value) : relatedModel().fromJSON(value)),
     })
   }
 }

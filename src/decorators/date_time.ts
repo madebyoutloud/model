@@ -1,6 +1,6 @@
-import type { ColumnDecorator } from '../types.js'
-import type { ModelClass } from '../model.js'
 import { config } from '../config.js'
+import type { ModelClass } from '../model.js'
+import type { ColumnDecorator } from '../types.js'
 
 export function deserialize(value: any): unknown {
   if (typeof value === 'string') {

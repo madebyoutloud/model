@@ -1,13 +1,12 @@
-import { defineConfig } from 'tsup'
+import { defineConfig } from 'tsdown'
 
 export default defineConfig({
   entry: ['src/index.ts'],
   clean: true,
   treeshake: true,
-  minify: process.env.MINIFY === 'true',
   outDir: './dist',
-  format: ['esm', 'cjs'],
+  format: ['esm'],
   dts: true,
+  platform: 'neutral',
   target: 'es2022',
-  tsconfig: 'tsconfig.json',
 })

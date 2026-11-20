@@ -1,20 +1,12 @@
 import type { Model, ModelClass } from './model.js'
 
-type PartialModelValue<T> = T extends (infer U)[]
-  ? PartialModelValue<U>[]
-  : T extends Model
-    ? ModelValues<T>
-    : T
+type PartialModelValue<T> = T extends (infer U)[] ? PartialModelValue<U>[] : T extends Model ? ModelValues<T> : T
 
 type NonFunctionPropertyNames<T> = {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  [K in keyof T]: T[K] extends Function ? never : K;
+  [K in keyof T]: T[K] extends (...args: any[]) => any ? never : K
 }[keyof T]
 
-export type ModelValues<
-  T extends Model,
-  Filtered = Pick<T, NonFunctionPropertyNames<T>>,
-> = {
+export type ModelValues<T extends Model, Filtered = Pick<T, NonFunctionPropertyNames<T>>> = {
   [K in keyof Filtered]?: PartialModelValue<Filtered[K]>
 }
 
@@ -22,20 +14,14 @@ export type ModelObject = Record<string, any>
 
 export type DecoratorFn = (target: any, property: any) => void
 
-export type TypedDecorator<PropType> = <
-  TKey extends string,
-  TTarget extends { [K in TKey]: PropType },
->(
+export type TypedDecorator<PropType> = <TKey extends string, TTarget extends Record<TKey, PropType>>(
   target: TTarget,
-  property: TKey
+  property: TKey,
 ) => void
 
-export type OptionalTypedDecorator<PropType> = <
-  TKey extends string,
-  TTarget extends { [K in TKey]?: PropType },
->(
+export type OptionalTypedDecorator<PropType> = <TKey extends string, TTarget extends Partial<Record<TKey, PropType>>>(
   target: TTarget,
-  property: TKey
+  property: TKey,
 ) => void
 
 export interface ColumnOptions {

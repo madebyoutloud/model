@@ -15,14 +15,15 @@
     "type": "git",
     "url": "https://github.com/madebyoutloud/model"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     }
   },
-  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -37,20 +38,26 @@
   "scripts": {
     "dev": "vitest dev",
     "test": "vitest run",
-    "build": "tsup-node --config .config/tsup.ts && rm -f dist/*.d.cts",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "build": "tsdown",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "typecheck": "tsc --noEmit",
     "prepack": "pnpm build",
-    "release": "release-it -c .config/release-it.json",
-    "size": "MINIFY=true pnpm build && (gzip -c dist/index.js | wc -c)"
+    "release": "release-it -c .config/release-it.json"
   },
   "devDependencies": {
-    "@outloud/eslint-config-typescript": "^1.1.2",
+    "@outloud/oxfmt-config": "^2.0.2",
+    "@outloud/oxlint-config": "^2.0.2",
     "@types/node": "^22.13.9",
     "dayjs": "^1.11.13",
-    "eslint": "^9.21.0",
+    "oxfmt": "^0.79.0",
+    "oxlint": "^1.94.0",
+    "oxlint-tsgolint": "^7.0.2007",
     "release-it": "^18.1.2",
-    "tsup": "^8.4.0",
+    "tsdown": "^0.15.12",
+    "typescript": "~5.8.2",
     "vitest": "^2.0.5"
   }
 }
